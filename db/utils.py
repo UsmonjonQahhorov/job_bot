@@ -31,7 +31,7 @@ class AbstractClass:
         await db.execute(query, {'value': value, 'condition_value': condition_value})
         await db.commit()
 
-    @classmethod
+    
     async def insert_into(cls, database, column, value):
         query = text(f"INSERT INTO {database} ({column}) VALUES (:column_value)")
         await db.execute(query, {'column_value': value})

@@ -77,9 +77,9 @@ async def send_reminder(chat_id, come_time):
     now = datetime.now()
     time_come = come_time.strftime("%H")
     if now.weekday() != 6:
-        print(now.weekday())
-        if now.hour == 22 and now.minute == 00 and time_come == "15":
+        if now.hour == 22 and time_come == "15":
             await bot.send_message(chat_id, message_text, reply_markup=await come_go(chat_id=chat_id))
+            await asyncio.sleep(120)
         elif now.hour == 17 and now.minute == "00" and time_come == "13":
             await bot.send_message(chat_id, message_text, reply_markup=await come_go(chat_id=chat_id))
 
@@ -90,10 +90,9 @@ async def send_message_everyday():
             user = await AbstractClass.get_all_users("workers")
             for i in user:
                 if i[14]:
-                    print(i[14])
                     await send_reminder(i[14], come_time=i[8])
-            chat_id = "sasa"
-            await bot.send_message(chat_id=chat_id, text="Ishka keldingizmi?", reply_markup=await come_go(chat_id))
+                    chat_id = i[14]
+            # await bot.send_message(chat_id=chat_id, text="Ishka keldingizmi?", reply_markup=await come_go(chat_id))
         except Exception as e:
             print(f"Error sending message to user: {e}")
 
