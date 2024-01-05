@@ -48,7 +48,7 @@ async def get_all_messages():
     for document in query_result:
         data = document.to_dict()
         messages.append(data)
-
+        
     return messages
 
 
