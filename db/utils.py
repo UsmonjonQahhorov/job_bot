@@ -56,6 +56,13 @@ class AbstractClass:
         return objects.all()
 
     @classmethod
+    async def get_by_userID(cls, database, user_id):
+        query = text(f"SELECT * FROM {database} WHERE w_date = :today")
+        today_date = datetime.datetime.now().strftime("20%y-%m-%d")
+        objects = await db.execute(query, {'today': today_date})
+        return objects.all()
+
+    @classmethod
     async def delete_user(cls, database, condition):
         query = text(f"DELETE * FROM {database} WHERE")
         result = await db.execute(query)

@@ -1,12 +1,12 @@
+import schedule
 import asyncio
+
+from db.utils import AbstractClass
 from datetime import datetime
 from firebase_admin import credentials, firestore, initialize_app
 from firebase_admin.auth import delete_user
-
 from bot.buttons.inline_buttons import come_go
 from bot.dispatcher import bot
-import schedule
-
 from db.utils import AbstractClass
 
 cred = credentials.Certificate("bot/sdkkey2.json")
@@ -97,6 +97,11 @@ async def send_message_everyday():
             print(f"Error sending message to user: {e}")
 
 
+# async def save_to_daily(user_id:str, come_time:str):
+#     today = datetime.now().strftime("20%y-%m-%d")
+#     data = await AbstractClass.get_by_userID(user_id = "706d21b3-e0fd-411f-984f-f61d8bd7a050", database="daily")
+#     print(data)
+
 
 
 async def main():
@@ -119,5 +124,5 @@ async def main():
 
 
 if __name__ == '__main__':
-    # asyncio.run(main())
-    asyncio.run(send_message_everyday())
+    asyncio.run(main())
+    # asyncio.run(save_to_daily("706d21b3-e0fd-411f-984f-f61d8bd7a050", "daily"))
