@@ -14,7 +14,23 @@ class DiscriminationMiddleware(BaseMiddleware):
 
 
     async def contains_discrimination(self, text: str) -> bool:
-        word_list = ['suka', 'jalap', 'qotaq', 'qotoq', 'am', 'mol', 'manqa', 'gandon', 'yiban', 'jalab', 'pizdes', 'pizdyuk', 'iflos']
+        word_list = [
+             'suka',
+             'jalap',
+             'qotaq',
+             'qotoq',
+             'am',
+             'mol',
+             'manqa',
+             'gandon',
+             'yiban',
+             'jalab',
+             'pizdes',
+             'pizdyuk',
+             'iflos',
+             'haromi',
+             'horami',
+        ]
         if text.lower() in word_list:
             return True
         else:

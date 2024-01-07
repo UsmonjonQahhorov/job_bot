@@ -1,3 +1,8 @@
+"""
+Ushbu python fileda biror sabab orqali
+ kech keladigan hodimlar uchun yozilgan functions bor
+"""
+
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
 from aiogram import types
@@ -33,6 +38,7 @@ async def get_case_handler(msg: types.Message, state: FSMContext):
     await state.set_state("time")
 
 
+#Ishchi kech qolishini bildirmoqchi bolganda hamma malumotni olib adminga jonatish joyi shu yerda
 @dp.message_handler(state="time")
 async def time_handler(msg: types.Message, state: FSMContext):
     try:
@@ -53,6 +59,7 @@ async def time_handler(msg: types.Message, state: FSMContext):
     await state.set_state("send_admin")
 
 
+#Adminga jonatish user tomonidan tasdiqlangandan song adminga habar jonatiladi 
 @dp.callback_query_handler(lambda call: call.data.startswith(roziman), state="send_admin")
 async def send_handler(call: CallbackQuery, state: FSMContext):
     print(call.data)
@@ -76,33 +83,3 @@ async def cancel_order(call: types.CallbackQuery, state: FSMContext):
     keyboard = await main_menu()
     await call.message.answer("Menulardan birini tanlang👇", reply_markup=keyboard)
     await state.set_state('menu')
-
-
-"""Ishlatilmaydigan qismi. Keraksiz"""
-#
-#
-# @dp.callback_query_handler(lambda call: call.data.startswith("bek"))
-# async def what_delete_handler(call: types.CallbackQuery, state: FSMContext):
-#     await call.message.delete()
-#     chat_id = call.data.split(":")[1]
-#     async with state.proxy() as data:
-#         data["cancel_id"] = chat_id
-#     await state.set_state("boldimi")
-#     await call.message.answer(text="Nima uchun bekor qildingiz❓\n\nIzoh yozish majburiy❗️")
-#
-#
-#
-# @dp.message_handler(state='boldimi')
-# async def not_save_handler(msg: types.Message, state: FSMContext):
-#     await bot.delete_message(msg.from_user.id, msg.message_id - 1)
-#     async with state.proxy() as data:
-#         chat_id = data.get('cancel_id')
-#     await bot.send_message(chat_id=chat_id,
-#                            text=f"<b>Sizning sorovingiz bekor qilindi❗️\nAdmin javobi: {msg.text}\n\nMurojat uchun: @U_Qahhorov</b>",
-#                            parse_mode="HTMl")
-#
-#
-# @dp.callback_query_handler(lambda call: call.data.startswith("Ruxsat"))
-# async def basicsave_handler(call: types.CallbackQuery, state: FSMContext):
-#     chat_id = call.data.split(":")[1]
-#     await bot.send_message(chat_id=chat_id, text="<b>Admin ruxsat berdi</b>", parse_mode="HTML")
