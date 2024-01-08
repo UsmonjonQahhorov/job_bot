@@ -12,26 +12,29 @@ class DiscriminationMiddleware(BaseMiddleware):
             await message.reply("Iltimos, haqoratli so'zlarni ishlatmang!!!")
             raise CancelHandler()
 
-
     async def contains_discrimination(self, text: str) -> bool:
-        word_list = [
-             'suka',
-             'jalap',
-             'qotaq',
-             'qotoq',
-             'am',
-             'mol',
-             'manqa',
-             'gandon',
-             'yiban',
-             'jalab',
-             'pizdes',
-             'pizdyuk',
-             'iflos',
-             'haromi',
-             'horami',
-        ]
-        if text.lower() in word_list:
-            return True
-        else:
-            return False
+        try:
+            word_list = [
+                'suka',
+                'jalap',
+                'qotaq',
+                'qotoq',
+                'am',
+                'mol',
+                'manqa',
+                'gandon',
+                'yiban',
+                'jalab',
+                'pizdes',
+                'pizdyuk',
+                'iflos',
+                'haromi',
+                'horami',
+            ]
+            if text.lower() in word_list:
+                return True
+            else:
+                return False
+
+        except:
+            pass

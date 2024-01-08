@@ -21,6 +21,8 @@ async def location_handler(msg: types.Message, state: FSMContext):
     lon = msg.location.longitude
     location = geolocator.reverse((lat, lon), exactly_one=True)
 
+    print("location: {location}")
+
     if location:
         address = location.raw.get('display_name', 'Unknown Address')
         print(address.split(",")[0])
@@ -28,7 +30,7 @@ async def location_handler(msg: types.Message, state: FSMContext):
             await msg.answer(text=f"<b>Raxmat!\nSiz ayni damda ishdasiz🙂</b>", parse_mode="HTML",
                              reply_markup=await early_leave())
         else:
-            await msg.answer("Yuborilgan manzil notogri, siz ishka hali kelmagansiz!")
+            await msg.answer("Yuborilgan manzil notogri❌, siz ishka hali kelmagansiz! Ishka kelgandan song qayta urinib koring")
     else:
         await msg.answer(text="<b>Manzil topilmadi</b>", parse_mode="HTML")
 
