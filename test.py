@@ -42,14 +42,14 @@ async def get_messages_by_chat_id(chat_id):
 
 
 async def get_all_messages():
-    messages_ref = db.collection("messages")
-    query_result = messages_ref.stream()
-    messages = []
-    for document in query_result:
-        data = document.to_dict()
-        messages.append(data)
-        
-    return messages
+    while True:
+        messages_ref = db.collection("messages")
+        query_result = messages_ref.stream()
+        messages = []
+        for document in query_result:
+            data = document.to_dict()
+            messages.append(data)
+        return messages
 
 
 async def update_message_status_by_chat_id(chat_id, new_status):
@@ -73,15 +73,21 @@ async def send_message_to_user(chat_id, text):
 
 
 async def send_reminder(chat_id, come_time):
-    message_text = "Ishga keldingizmi❓"
+    message_text1 = ("<i>Assalomu Alaykum, Xayirli Tong!😊\n Iltimos ertalab soat 9:00 da ishka kelganingizda"
+                     " bizga xabar berishni unutmang. Sizning punktualligingiz juda qadirlanadi. Kuningiz samarali o'tsin!🚀</i>")
+
+    new_text = ("<i>Assalomu Alaykum, Xayirli Tong!😊\n Iltimos ertalab soat 13:00 da ishka kelganingizda"
+                " bizga xabar berishni unutmang. Sizning punktualligingiz juda qadirlanadi. Kuningiz samarali o'tsin!🚀</i>")
+
     now = datetime.now()
     time_come = come_time.strftime("%H")
     if now.weekday() != 6:
-        if now.hour == 22 and time_come == "15":
-            await bot.send_message(chat_id, message_text, reply_markup=await come_go(chat_id=chat_id))
+        if now.hour == 16 and time_come == "15":
+            await bot.send_message(chat_id, message_text1, reply_markup=await come_go(chat_id=chat_id),
+                                   parse_mode="HTML")
             await asyncio.sleep(120)
         elif now.hour == 17 and now.minute == "00" and time_come == "13":
-            await bot.send_message(chat_id, message_text, reply_markup=await come_go(chat_id=chat_id))
+            await bot.send_message(chat_id, new_text, reply_markup=await come_go(chat_id=chat_id))
 
 
 async def send_message_everyday():
@@ -103,7 +109,6 @@ async def send_message_everyday():
 #     print(data)
 
 
-
 async def main():
     while True:
         retrieved_messages = await get_all_messages()
@@ -111,12 +116,13 @@ async def main():
         tasks = []
         for i in retrieved_messages:
             status = i.get('status')
+            print(status)
             if status == "true":
                 chat_id = i['chat_id']
                 text = f"👤Admindan kelgan habar: {i['text']}"
                 print(chat_id)
                 print(text)
-                tasks.append(send_message_to_user(chat_id, text))
+                tasks.append(await send_message_to_user(chat_id, text))
                 await update_message_status_by_chat_id(chat_id=chat_id, new_status="processed")
             else:
                 print("no sms")

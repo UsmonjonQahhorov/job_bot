@@ -13,7 +13,9 @@ from test import send_message_admin
 
 @dp.message_handler(Text(absence), state="*")
 async def absence_handler(msg: types.Message, state: FSMContext):
-    await msg.answer("Nima uchun ishka kelmaysiz? Sababini yozing 👇", reply_markup=ReplyKeyboardRemove())
+    await msg.answer(
+        "<b>Iltimos, ishchi nima uchun ishka kelmaysiz sababini ko'rsating👇. U kasalik yoki boshqa harakatlar bilan bog'liq bo'lishi mumkin.</b>",
+        reply_markup=ReplyKeyboardRemove(), parse_mode="HTML")
     await state.set_state("sabab_kiritish")
 
 
@@ -21,7 +23,7 @@ async def absence_handler(msg: types.Message, state: FSMContext):
 async def absence_handler(msg: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data["sabab"] = msg.text
-    await msg.answer("<b>Qaysi kunlarda kela olmaysiz iltimos tanlang</b>",
+    await msg.answer("<b>Yaxshi🤝. Qaysi kundan ishga kelmaysiz? Menudagi sanalardan birini tanlang👇</b>",
                      reply_markup=await get_days_keyboard(), parse_mode="HTML")
     await state.set_state("choose_day")
 
@@ -30,7 +32,7 @@ async def absence_handler(msg: types.Message, state: FSMContext):
 async def callback_handler(msg: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data["day_1"] = msg.text
-    await msg.answer(f"Ishka qaytish kunini tanlang👇",
+    await msg.answer(f"Yaxshi🤝. Qaysi kundan ishga qaytasiz? Menudagi sanalardan birini tanlang👇",
                      reply_markup=await get_days_button(
                          msg.text)
                      )
@@ -56,6 +58,7 @@ async def second_handler(msg: types.Message, state: FSMContext):
 
 @dp.callback_query_handler(lambda call: call.data.startswith(roziman), state="confirm_order")
 async def confirm_order(call: types.CallbackQuery, state: FSMContext):
+    await bot.delete_message(call.from_user.id, call.message.message_id)
     async with state.proxy() as data:
         day_1 = data["day_1"]
         day_2 = data["day_2"]
@@ -65,7 +68,6 @@ async def confirm_order(call: types.CallbackQuery, state: FSMContext):
     text = (f"Ishchi {day_1} -- {day_2} kunlari kela olmaslikka ruxsat sorayapdi\n\n"
             f"Sabab:{sabab}")
     await send_message_admin(text=text, chat_id=str(call.from_user.id), user_id=str(user_id1))
-    await call.answer("Sorovingiz adminga yetkazildi✅\n"
-                      "Admin javobini kuting!"),
+    await call.message.answer("<b>Habaringiz adminga yetkazildi✅\n\n"
+                              "Iltimos, 👨‍💻admin javobini kuting</b>", parse_mode="HTML")
     await state.finish()
-

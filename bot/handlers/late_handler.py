@@ -20,7 +20,9 @@ from test import send_message_admin
 
 @dp.message_handler(Text(late), state="*")
 async def case_handler(msg: types.Message, state: FSMContext):
-    await msg.answer("Nima uchun kech qolasiz sababini kiriting👇", reply_markup=types.ReplyKeyboardRemove())
+    await msg.answer(
+        "<i>Iltimos, ishchi nima uchun ishka kech qolasiz sababini ko'rsating👇.</i>",
+        reply_markup=types.ReplyKeyboardRemove(), parse_mode="HTML")
     await state.set_state("case")
 
 
@@ -32,13 +34,11 @@ async def get_case_handler(msg: types.Message, state: FSMContext):
         pass
     async with state.proxy() as data:
         data["late_hours"] = msg.text
-    await msg.answer("Qancha vaqt davomida kech qolishingizni kiriting yoki tanlang",
-                     reply_markup=await late_hours())
-
+    await msg.answer("Yaxshi👌. Qanchaga kechikishingizni kiriting🤔, Biror vaqtni tanlang🕐", reply_markup=await late_hours())
     await state.set_state("time")
 
 
-#Ishchi kech qolishini bildirmoqchi bolganda hamma malumotni olib adminga jonatish joyi shu yerda
+# Ishchi kech qolishini bildirmoqchi bolganda hamma malumotni olib adminga jonatish joyi shu yerda
 @dp.message_handler(state="time")
 async def time_handler(msg: types.Message, state: FSMContext):
     try:
@@ -59,17 +59,17 @@ async def time_handler(msg: types.Message, state: FSMContext):
     await state.set_state("send_admin")
 
 
-#Adminga jonatish user tomonidan tasdiqlangandan song adminga habar jonatiladi 
+# Adminga jonatish user tomonidan tasdiqlangandan song adminga habar jonatiladi
 @dp.callback_query_handler(lambda call: call.data.startswith(roziman), state="send_admin")
 async def send_handler(call: CallbackQuery, state: FSMContext):
-    print(call.data)
     try:
+        await bot.delete_message(call.from_user.id, call.message.message_id)
         user = await AbstractClass.get_chat_id("workers", chat_id=str(call.from_user.id))
         async with state.proxy() as data:
             text = (f"Ishchi {data['vaqt']} kech qolishini bildiryapdi\n"
                     f"Sabab: {data['late_hours']}")
         await send_message_admin(text=text, chat_id=str(call.from_user.id), user_id=str(user[0][0]))
-        await call.answer("Habaringiz adminga yetkazildi✅")
+        await call.message.answer("Habaringiz adminga yetkazildi✅\n\n Iltimos, 👨‍💻admin javobini kuting")
         await state.finish()
     except:
         pass
