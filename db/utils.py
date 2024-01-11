@@ -7,6 +7,7 @@ import pytz
 from sqlalchemy import Column, DateTime
 import re
 
+
 db.init()
 
 
@@ -31,10 +32,46 @@ class AbstractClass:
         await db.execute(query, {'value': value, 'condition_value': condition_value})
         await db.commit()
 
-    
+    @classmethod
+    async def update_leave_time(cls, worker_id, w_date, leave_time):
+        w_date = datetime.datetime.strptime(w_date, "%Y-%m-%d")
+        leave_time = datetime.datetime.strptime(leave_time, "%H:%M:%S")
+
+        database = "daily"
+        column_to_update = "leave_time"
+        column_to_update_status = "status"
+        condition_column1 = "worker_id"
+        condition_value1 = worker_id
+        condition_column2 = "w_date"
+        condition_value2 = w_date
+
+        query = text(
+            f"UPDATE {database} "
+            f"SET {column_to_update} = :leave_time, {column_to_update_status} = FALSE "
+            f"WHERE {condition_column1} = :condition_value1 AND {condition_column2} = :condition_value2"
+        )
+
+        await db.execute(
+            query,
+            {
+                "leave_time": leave_time,
+                "condition_value1": condition_value1,
+                "condition_value2": condition_value2,
+            },
+        )
+        await db.commit()
+
     async def insert_into(cls, database, column, value):
         query = text(f"INSERT INTO {database} ({column}) VALUES (:column_value)")
         await db.execute(query, {'column_value': value})
+        await db.commit()
+
+    @classmethod
+    async def insert_into_to_daily(cls, database, w_date, worker_id, come_time, status, late_min):
+        query = text(f"INSERT INTO {database} (w_date, worker_id, come_time, status, late_min) VALUES (:w_date, :worker_id, :come_time, :status, :late_min)")
+        w_date = datetime.datetime.strptime(w_date, "%Y-%m-%d")
+        come_time = datetime.datetime.strptime(come_time, "%H:%M:%S")
+        await db.execute(query, {'w_date': w_date, 'worker_id': worker_id, 'come_time': come_time, 'status': status, 'late_min': late_min})
         await db.commit()
 
     @classmethod
@@ -57,9 +94,8 @@ class AbstractClass:
 
     @classmethod
     async def get_by_userID(cls, database, user_id):
-        query = text(f"SELECT * FROM {database} WHERE w_date = :today")
-        today_date = datetime.datetime.now().strftime("20%y-%m-%d")
-        objects = await db.execute(query, {'today': today_date})
+        query = text(f"SELECT * FROM {database} WHERE worker_id = :user_id")
+        objects = await db.execute(query, {'user_id': user_id})
         return objects.all()
 
     @classmethod
@@ -85,6 +121,8 @@ async def format_phone_number(phone_number):
         return formatted_number
     else:
         return "Invalid phone number"
+
+
 import asyncio
 from sqlalchemy import Column, String
 from sqlalchemy.ext.declarative import declarative_base
@@ -103,7 +141,6 @@ host = os.getenv("DB_HOST")
 port = os.getenv("DB_PORT")
 dbname = os.getenv("DB_NAME")
 
-
 connection_url = f"postgresql+asyncpg://{user}:{password}@{host}:{port}/{dbname}"
 engine = create_async_engine(connection_url)
 Session = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -112,10 +149,12 @@ db_session = scoped_session(Session)
 Base = declarative_base()
 Base.query = db_session.query_property()
 
+
 class Foo(Base):
-    __tablename__ = "foo"    
+    __tablename__ = "foo"
     id = Column(String, primary_key=True)
     name = Column(String)
+
 
 class Store:
     def __init__(self):
@@ -126,11 +165,12 @@ class Store:
         self.connection = await engine.begin()
         metadata = MetaData(bind=engine)
         await self.connection.run_sync(metadata.create_all())
-    
+
 
 async def main():
     store = Store()
     await store.connect()
+
 
 if __name__ == '__main__':
     asyncio.run(main())

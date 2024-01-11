@@ -21,7 +21,7 @@ from test import send_message_admin
 @dp.message_handler(Text(late), state="*")
 async def case_handler(msg: types.Message, state: FSMContext):
     await msg.answer(
-        "<i>Iltimos, ishchi nima uchun ishka kech qolasiz sababini ko'rsating👇.</i>",
+        "<i>Iltimos, ishchi nima uchun ishga kech qolasiz sababini ko'rsating👇.</i>",
         reply_markup=types.ReplyKeyboardRemove(), parse_mode="HTML")
     await state.set_state("case")
 
@@ -54,7 +54,7 @@ async def time_handler(msg: types.Message, state: FSMContext):
     reply_markup = await send_button()
     await msg.answer(f"Vaqt⏱:{msg.text}\n"
                      f"Sabab: {data['late_hours']}\n\n"
-                     f"Ushbu malumot adminga jonatilsinmi?",
+                     f"Ushbu ma'lumot adminga jonatilsinmi?",
                      reply_markup=reply_markup)
     await state.set_state("send_admin")
 
@@ -69,7 +69,7 @@ async def send_handler(call: CallbackQuery, state: FSMContext):
             text = (f"Ishchi {data['vaqt']} kech qolishini bildiryapdi\n"
                     f"Sabab: {data['late_hours']}")
         await send_message_admin(text=text, chat_id=str(call.from_user.id), user_id=str(user[0][0]))
-        await call.message.answer("Habaringiz adminga yetkazildi✅\n\n Iltimos, 👨‍💻admin javobini kuting")
+        await call.message.answer("Xabaringiz adminga yetkazildi✅\n\n Iltimos, 👨‍💻admin javobini kuting")
         await state.finish()
     except:
         pass

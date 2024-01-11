@@ -53,3 +53,11 @@ async def come_go(chat_id: str):
         [InlineKeyboardButton(text="❌Kelmadim", callback_data=f"yoqKelmadim{chat_id}")]
     ]
     return InlineKeyboardMarkup(inline_keyboard=design)
+
+
+async def leave(chat_id: str):
+    design = [
+        [InlineKeyboardButton(text="Ketdim🚶🏻", callback_data=f"🚶🏻ketdim{chat_id}")],
+        [InlineKeyboardButton(text="Ketmadim🙅‍♂️", callback_data=f"yoqvalbat{chat_id}")]
+    ]
+    return InlineKeyboardMarkup(inline_keyboard=design)
