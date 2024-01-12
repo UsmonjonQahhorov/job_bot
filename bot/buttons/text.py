@@ -1,9 +1,11 @@
 login = "LogIn"
 register = "Register✅"
 
-late = "Kech qolaman🙋‍♂️"
-absence = "Ishga bormayman🙅‍♂️"
+late = "Kech qolaman  🟡"
+absence = "Ishga bormayman  🔴"
 early = "Vaqtidan oldin ishdan ketish🚶🏻"
+keldim = "Keldim  🟢"
+
 
 on = "10 minut"
 yigirma = "20 minut"

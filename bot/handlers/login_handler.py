@@ -19,18 +19,17 @@ async def login_handler(msg: types.Message, state: FSMContext):
 async def number_handler(msg: types.Message, state: FSMContext):
     phone_number = msg.text
     number = await format_phone_number(phone_number)
-    # print(number)
     async with state.proxy() as data:
         data["phone_number"] = number
         db_data = await AbstractClass.get_phone("workers", number)
-        # print(db_data[0][6])
-    if db_data:
-        if number == db_data[0][6]:
-            await msg.answer("<i>Raxmat! Endi sizga berilgan codeni kiriting👇</i>", parse_mode="HTML")
-            await state.set_state("token")
-    else:
-        await msg.answer("<b>Nomerni notogri kiritdingiz yoki fomat notogri!\nMisol uchun: +998991234567\n"
-                         "Qayta urinib koring👇</b>", parse_mode="HTML")
+        for user in db_data:
+            if user[11] == None:
+                if number == user[6]:
+                    await msg.answer("<i>Raxmat! Endi sizga berilgan codeni kiriting👇</i>", parse_mode="HTML")
+                    await state.set_state("token")
+                else:
+                    await msg.answer("<b>Nomerni notogri kiritdingiz yoki fomat notogri!\nMisol uchun: +998991234567\n"
+                                     "Qayta urinib koring👇</b>", parse_mode="HTML")
 
 
 @dp.message_handler(state="token")
@@ -43,8 +42,6 @@ async def token_handler(msg: types.Message, state: FSMContext):
             info = await AbstractClass.get_phone("workers", number)
         except:
             pass
-
-        print(info[0][12])
         if token == info[0][12]:
             await msg.answer("<i>Siz tizimdasiz!\nMenulardan birini tanlang👇</i>", parse_mode="HTML",
                              reply_markup=await main_menu())

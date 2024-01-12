@@ -1,13 +1,16 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
+from aiogram.dispatcher.filters import Text
 from aiogram.types import ContentType
 from datetime import datetime
 from bot.buttons.reply_buttons import location, early_leave, main_menu
 from bot.dispatcher import dp
 from geopy import Nominatim
 from db.utils import AbstractClass
-from test import save_to_daily
-
+import asyncio
+import aiohttp
+from test import save_to_daily, post_to_api
+from bot.buttons.text import keldim
 
 geolocator = Nominatim(user_agent="my_geocoding_app")
 
@@ -30,13 +33,23 @@ async def location_handler(msg: types.Message, state: FSMContext):
         address = location.raw.get('display_name', 'Unknown Address')
         print(address)
         print(address.split(",")[2])
-        if address.split(",")[0] == "ТГЭУ Ректорат" or address.split(",")[0] == "Toshkent Davlat Iqtisodiyot Universiteti":
-
+        if address.split(",")[0] == "ТГЭУ Ректорат" or address.split(",")[
+            0] == "Toshkent Davlat Iqtisodiyot Universiteti":
             await msg.answer(text=f"<b>Raxmat!\nSiz ayni damda ishdasiz🙂\n Kuningiz xayirli o'tsin!</b>",
                              parse_mode="HTML",
                              reply_markup=await early_leave())
             user = await AbstractClass.get_chat_id("workers", msg.from_user.id)
-            save = await save_to_daily(user[0][0], datetime.now().strftime("%H:%M:%S"))
+            api_url = "https://tizimswag.astrolab.uz/v1/daily"
+            data_to_send = {
+                "id": str(user[0][0])
+            }
+            result = await post_to_api(api_url, data_to_send)
+            print(result)
+            if result:
+                print(f"Natija: {result}")
+            else:
+                print("So'rovda xatolik yuz berdi.")
+            # save = await save_to_daily(user[0][0], datetime.now().strftime("%H:%M:%S"))
         else:
             await msg.answer(
                 "Yuborilgan manzil notogri❌, siz ishga hali kelmagansiz! Ishga kelgandan song qayta urinib ko'ring,\n"
@@ -62,11 +75,17 @@ async def location_handler(msg: types.Message, state: FSMContext):
     lat = msg.location.latitude
     lon = msg.location.longitude
     location = geolocator.reverse((lat, lon), exactly_one=True)
-
-    today = datetime.now().strftime("20%y-%m-%d")
-    leave_time = datetime.now().strftime("%H:%M:%S")
     user = await AbstractClass.get_chat_id("workers", msg.from_user.id)
-    user_data = await AbstractClass.update_leave_time(user[0][0], today, leave_time)
-    print("done")
-    print(user_data)
 
+    await msg.answer("Raxmat!. Siz ishdan ketkanligingizni tasdiqladingiz👍\n"
+                     "Yaxshi dam oling😊")
+    api_url = "https://tizimswag.astrolab.uz/v1/daily"
+    data_to_send = {
+        "id": str(user[0][0])
+    }
+    result = await post_to_api(api_url, data_to_send)
+    print(result)
+    if result:
+        print(f"Natija: {result}")
+    else:
+        print("So'rovda xatolik yuz berdi.")

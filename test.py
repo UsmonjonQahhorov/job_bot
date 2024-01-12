@@ -1,8 +1,8 @@
+import json
+
 import schedule
 import asyncio
-
 from aiogram.types import ParseMode
-
 from db.utils import AbstractClass
 from datetime import datetime
 from firebase_admin import credentials, firestore, initialize_app
@@ -10,6 +10,7 @@ from firebase_admin.auth import delete_user
 from bot.buttons.inline_buttons import come_go, leave
 from bot.dispatcher import bot
 from db.utils import AbstractClass
+import requests
 
 cred = credentials.Certificate("bot/sdkkey2.json")
 initialize_app(cred)
@@ -122,6 +123,18 @@ async def send_message_everyday():
         print(f"Error sending message to user: {e}")
 
 
+async def post_to_api(api_url, data_to_send):
+    headers = {'Content-Type': 'application/json'}
+    try:
+        response = requests.post(api_url, data=json.dumps(data_to_send), headers=headers)
+        response.raise_for_status()
+        result = response.json()
+        return result
+    except requests.exceptions.RequestException as err:
+        print(f"Request exception: {err}")
+        return None
+
+
 # async def send_message_when_leave():
 #     try:
 #         user = await AbstractClass.get_all_users("workers")
@@ -137,16 +150,18 @@ async def send_message_everyday():
 
 async def send_message_9_am(chat_id):
     now = datetime.now()
-    soat = "51"
+    minut = "51"
+    soat = "09"
+
     if now.weekday() != 6:
-        if now.hour == 16 and now.minute == int(soat):
+        if now.hour == int(soat) and now.minute == int(soat):
             print("sending")
             message_text = ("<i>Assalomu Alaykum, Xayirli Tong!😊\n Iltimos soat 9:00 da ishga kelganingizda"
                             " bizga xabar berishni unutmang. Sizning punktualligingiz juda qadirlanadi. Kuningiz samarali o'tsin!🚀</i>")
             await bot.send_message(chat_id, message_text, parse_mode="HTML", reply_markup=await come_go(chat_id))
 
 
-        elif now.hour == 16 and now.minute == 53:
+        elif now.hour == 23 and now.minute == 30:
             message_text = ("<i>Assalomu Alaykum, Xayirli kech!😊\n Iltimos soat 18:00 da ishdan ketganingizda"
                             " bizga xabar berishni unutmang. Sizning punktualligingiz juda qadirlanadi. Yaxshi dam oling😊</i>")
             await bot.send_message(chat_id, message_text, parse_mode="HTML", reply_markup=await leave(chat_id))

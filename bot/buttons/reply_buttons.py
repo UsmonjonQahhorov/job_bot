@@ -3,7 +3,7 @@ from aiogram import types
 import re
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 from bot.buttons.text import login, register, late, absence, early
-from bot.buttons.text import on, yigirma, ottiz, qirq, ellik, bir_soat
+from bot.buttons.text import on, yigirma, ottiz, qirq, ellik, bir_soat, keldim
 
 
 async def main_menu_buttons():
@@ -14,10 +14,9 @@ async def main_menu_buttons():
 
 
 async def main_menu():
-    design = [
-        [late], [absence]
-    ]
-    return ReplyKeyboardMarkup(keyboard=design, resize_keyboard=True)
+    keyboard = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    design = [keldim, late, absence]
+    return keyboard.add(*design)
 
 
 async def late_hours():
