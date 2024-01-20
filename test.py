@@ -134,6 +134,18 @@ async def post_to_api(api_url, data_to_send):
         return None
 
 
+async def post_exit_api(today_date):
+    api_url = "https://tizimswag.astrolab.uz/v1/get-workers-by-day"
+    headers = {'Content-Type': 'application/json'}
+    try:
+        response = requests.get(f"{api_url}/{today_date}", headers=headers)
+        response.raise_for_status()
+        result = response.json()
+        return result
+    except requests.exceptions.RequestException as err:
+        print(f"Request exception: {err}")
+
+
 async def post_to_api_today(user_id, today_date):
     api_url = "https://tizimswag.astrolab.uz/v1/get-worker-day"
     url_params = f"{user_id}/{today_date}"
@@ -164,8 +176,23 @@ async def send_message_9_am(chat_id):
             await bot.send_message(chat_id, message_text, parse_mode="HTML", reply_markup=await leave(chat_id))
 
 
+async def exit_all_workers(user_id):
+    try:
+        api_url = "https://tizimswag.astrolab.uz/v1/daily"
+        today_date = datetime.now().strftime("20%y-%m-%d")
+        data = await post_exit_api(today_date)
+        for user in data["came"]:
+            data_to_send = {
+                "id": str(user["id"])
+            }
+            await post_to_api(api_url, data_to_send)
+    except Exception as e:
+        print(e)
+
+
 scheduler.add_job(send_message_everyday, 'cron', hour="9", minute='0')  # Once a day
 scheduler.add_job(send_message_after, 'cron', hour='18', minute='10')  # Everyday at 15:00
+scheduler.add_job(exit_all_workers, 'cron', hour='20', minute='00')  # Everyday at 15:00
 
 
 async def on_startup(dp):
