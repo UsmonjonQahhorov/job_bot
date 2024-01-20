@@ -191,7 +191,7 @@ async def exit_all_workers():
 
 
 scheduler.add_job(send_message_everyday, 'cron', hour="9", minute='0')  # Once a day
-scheduler.add_job(send_message_after, 'cron', hour='18', minute='10')  # Everyday at 15:00
+scheduler.add_job(send_message_after, 'cron', hour='18', minute='00')  # Everyday at 15:00
 scheduler.add_job(exit_all_workers, 'cron', hour='20', minute='00')  # Everyday at 15:00
 
 
