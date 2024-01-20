@@ -176,7 +176,7 @@ async def send_message_9_am(chat_id):
             await bot.send_message(chat_id, message_text, parse_mode="HTML", reply_markup=await leave(chat_id))
 
 
-async def exit_all_workers(user_id):
+async def exit_all_workers():
     try:
         api_url = "https://tizimswag.astrolab.uz/v1/daily"
         today_date = datetime.now().strftime("20%y-%m-%d")
