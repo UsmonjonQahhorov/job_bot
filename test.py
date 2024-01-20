@@ -1,20 +1,19 @@
 import json
-
-import schedule
 import asyncio
 from aiogram.types import ParseMode
-from db.utils import AbstractClass
 from datetime import datetime
 from firebase_admin import credentials, firestore, initialize_app
-from firebase_admin.auth import delete_user
 from bot.buttons.inline_buttons import come_go, leave
 from bot.dispatcher import bot
 from db.utils import AbstractClass
 import requests
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 cred = credentials.Certificate("bot/sdkkey2.json")
 initialize_app(cred)
 db = firestore.client()
+
+scheduler = AsyncIOScheduler()
 
 
 async def send_message_admin(text: str, chat_id: str, user_id: str):
@@ -86,39 +85,39 @@ async def send_message_to_user(chat_id, text):
         print(f"Error sending message to user: {e}")
 
 
-# This function used to for send remind message to user every working day.
-# async def send_reminder(chat_id, come_time):
-#     message_text1 = ("<i>Assalomu Alaykum, Xayirli Tong!😊\n Iltimos ertalab soat 9:00 da ishga kelganingizda"
-#                      " bizga xabar berishni unutmang. Sizning punktualligingiz juda qadirlanadi. Kuningiz samarali o'tsin!🚀</i>")
-#
-#     new_text = ("<i>Assalomu Alaykum, Xayirli Tong!😊\n Iltimos ertalab soat 13:00 da ishga kelganingizda"
-#                 " bizga xabar berishni unutmang. Sizning punktualligingiz juda qadirlanadi. Kuningiz samarali o'tsin!🚀</i>")
-#
-#     now = datetime.now()
-#     time_come = come_time.strftime("%H")
-#     if now.weekday() != 6:
-#         if now.hour == 14 and now.minute == 58 and time_come == "09":
-#             await bot.send_message(chat_id, message_text1, reply_markup=await come_go(chat_id=chat_id),
-#                                    parse_mode="HTML")
-#
-#         elif now.hour == 14 and now.minute == 22 and time_come == "09":
-#             await bot.send_message(chat_id, new_text, reply_markup=await come_go(chat_id=chat_id),
-#                                    parse_mode=ParseMode.HTML)
-#             await asyncio.sleep(60)
+"""Send message everyday at 9:00 to workers"""
 
 
 async def send_message_everyday():
+    today_date = datetime.now().strftime("20%y-%m-%d")
+    try:
+        user = await AbstractClass.get_all_users("workers")
+        for i in user:
+            query = await post_to_api_today(user_id=i[0], today_date=today_date)
+            print(query)
+            if query == None:
+                if i[14]:
+                    a = str(i[8])
+                    if a == "09:00:00":
+                        chat_id = i[14]
+                        await send_message_9_am(chat_id)
+                        print(f"Send message at 9:00 {chat_id}")
+        # await asyncio.sleep(50)
+    except Exception as e:
+        print(f"Error sending message to user: {e}")
+
+
+"""Send message everyday at 18:00 to workers"""
+
+
+async def send_message_after():
     try:
         user = await AbstractClass.get_all_users("workers")
         for i in user:
             if i[14]:
-                a = str(i[8])
-                if a == "09:00:00":
-                    chat_id = i[14]
-                    await send_message_9_am(chat_id)
-                    print(chat_id)
-        await asyncio.sleep(60)
-
+                chat_id = i[14]
+                await send_message_9_am(chat_id)
+                print(chat_id)
     except Exception as e:
         print(f"Error sending message to user: {e}")
 
@@ -135,65 +134,47 @@ async def post_to_api(api_url, data_to_send):
         return None
 
 
-# async def send_message_when_leave():
-#     try:
-#         user = await AbstractClass.get_all_users("workers")
-#         for i in user:
-#             if i[14]:
-#                 chat_id = i[14]
-#                 await send_message_9_am(chat_id)
-#         await asyncio.sleep(60)
-#
-#     except Exception as e:
-#         print(f"Error sending message to user: {e}")
+async def post_to_api_today(user_id, today_date):
+    api_url = "https://tizimswag.astrolab.uz/v1/get-worker-day"
+    url_params = f"{user_id}/{today_date}"
+    headers = {'Content-Type': 'application/json'}
+    try:
+        response = requests.get(f"{api_url}/{url_params}", headers=headers)
+        response.raise_for_status()
+        result = response.json()
+        return result
+    except requests.exceptions.RequestException as err:
+        print(f"Request exception: {err}")
 
 
 async def send_message_9_am(chat_id):
     now = datetime.now()
-    minut = "51"
-    soat = "09"
-
     if now.weekday() != 6:
-        if now.hour == int(soat) and now.minute == int(soat):
-            print("sending")
-            message_text = ("<i>Assalomu Alaykum, Xayirli Tong!😊\n Iltimos soat 9:00 da ishga kelganingizda"
-                            " bizga xabar berishni unutmang. Sizning punktualligingiz juda qadirlanadi. Kuningiz samarali o'tsin!🚀</i>")
+        if now.hour == 9:
+            print(f"sending message to {chat_id}")
+            message_text = (
+                f"<i>Assalomu Alaykum, Xayirli Tong!😊\nSoat {now.hour}:{now.minute} bo'ldi, ishga kelganingizda"
+                " bizga xabar berishni unutmang. Sizning punktualligingiz juda qadirlanadi. Kuningiz samarali o'tsin!🚀</i>")
             await bot.send_message(chat_id, message_text, parse_mode="HTML", reply_markup=await come_go(chat_id))
 
-
-        elif now.hour == 23 and now.minute == 30:
-            message_text = ("<i>Assalomu Alaykum, Xayirli kech!😊\n Iltimos soat 18:00 da ishdan ketganingizda"
-                            " bizga xabar berishni unutmang. Sizning punktualligingiz juda qadirlanadi. Yaxshi dam oling😊</i>")
+        elif now.hour == 18:
+            message_text = (
+                f"<i>Assalomu Alaykum, Xayirli kech!😊\nSoat {now.hour}:{now.minute} bo'ldi, ishdan ketganingizda"
+                " bizga xabar berishni unutmang. Sizning punktualligingiz juda qadirlanadi. Yaxshi dam oling.😊</i>")
             await bot.send_message(chat_id, message_text, parse_mode="HTML", reply_markup=await leave(chat_id))
 
 
-async def save_to_daily(user_id, come_time):
-    today = datetime.now().strftime("20%y-%m-%d")
-    come_time = datetime.now().strftime("%H:%M:%S")
-    data = await AbstractClass.get_by_userID(user_id=user_id, database="daily")
-    for user in data:
-        if user[0] != datetime.now().strftime("20%y-%m-%d"):
-            await AbstractClass.insert_into_to_daily(database="daily",
-                                                     w_date=today,
-                                                     worker_id=user_id,
-                                                     come_time=come_time,
-                                                     status=True,
-                                                     late_min=160
-                                                     )
-        else:
-            return False
+scheduler.add_job(send_message_everyday, 'cron', hour="9", minute='0')  # Once a day
+scheduler.add_job(send_message_after, 'cron', hour='18', minute='10')  # Everyday at 15:00
 
 
 async def on_startup(dp):
-    # Schedule the periodic task
+    scheduler.start()
     asyncio.create_task(periodic_check())
-    asyncio.create_task(deriodic_cjeck1())
 
 
-async def deriodic_cjeck1():
-    while True:
-        await send_message_everyday()
-        # await send_message_when_leave()
+async def on_shutdown(dp):
+    scheduler.shutdown()
 
 
 async def periodic_check():

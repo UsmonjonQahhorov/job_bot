@@ -1,12 +1,10 @@
 import json
-from sqlalchemy import Column, DateTime, delete as sqlalchemy_delete, update as sqlalchemy_update, Float, func, text
-from sqlalchemy.future import select
+from sqlalchemy import text
 from db import Base, db
 import datetime
 import pytz
 from sqlalchemy import Column, DateTime
 import re
-
 
 db.init()
 
@@ -61,6 +59,7 @@ class AbstractClass:
         )
         await db.commit()
 
+    @classmethod
     async def insert_into(cls, database, column, value):
         query = text(f"INSERT INTO {database} ({column}) VALUES (:column_value)")
         await db.execute(query, {'column_value': value})
@@ -68,10 +67,12 @@ class AbstractClass:
 
     @classmethod
     async def insert_into_to_daily(cls, database, w_date, worker_id, come_time, status, late_min):
-        query = text(f"INSERT INTO {database} (w_date, worker_id, come_time, status, late_min) VALUES (:w_date, :worker_id, :come_time, :status, :late_min)")
+        query = text(
+            f"INSERT INTO {database} (w_date, worker_id, come_time, status, late_min) VALUES (:w_date, :worker_id, :come_time, :status, :late_min)")
         w_date = datetime.datetime.strptime(w_date, "%Y-%m-%d")
         come_time = datetime.datetime.strptime(come_time, "%H:%M:%S")
-        await db.execute(query, {'w_date': w_date, 'worker_id': worker_id, 'come_time': come_time, 'status': status, 'late_min': late_min})
+        await db.execute(query, {'w_date': w_date, 'worker_id': worker_id, 'come_time': come_time, 'status': status,
+                                 'late_min': late_min})
         await db.commit()
 
     @classmethod
@@ -97,12 +98,6 @@ class AbstractClass:
         query = text(f"SELECT * FROM {database} WHERE worker_id = :user_id")
         objects = await db.execute(query, {'user_id': user_id})
         return objects.all()
-
-    @classmethod
-    async def delete_user(cls, database, condition):
-        query = text(f"DELETE * FROM {database} WHERE")
-        result = await db.execute(query)
-        return result.fetchall()
 
 
 class CreatedModel(Base, AbstractClass):

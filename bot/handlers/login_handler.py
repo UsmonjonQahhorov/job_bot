@@ -30,7 +30,8 @@ async def number_handler(msg: types.Message, state: FSMContext):
                 else:
                     await msg.answer("<b>Nomerni notogri kiritdingiz yoki fomat notogri!\nMisol uchun: +998991234567\n"
                                      "Qayta urinib koring👇</b>", parse_mode="HTML")
-
+            else:
+                await msg.answer("Siz tizimda mavjud emassiz!")
 
 @dp.message_handler(state="token")
 async def token_handler(msg: types.Message, state: FSMContext):

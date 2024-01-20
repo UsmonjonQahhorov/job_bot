@@ -6,6 +6,7 @@ absence = "Ishga bormayman  🔴"
 early = "Vaqtidan oldin ishdan ketish🚶🏻"
 keldim = "Keldim  🟢"
 
+yess = "Ha✅"
 
 on = "10 minut"
 yigirma = "20 minut"
@@ -14,6 +15,5 @@ qirq = "40 minut"
 ellik = "50 minut"
 bir_soat = "1 soat"
 
-
-roziman ="Adminga jonatish📨"
+roziman = "Adminga jonatish📨"
 ochirish = "Ochirish🗑"

@@ -63,6 +63,7 @@ async def confirm_order(call: types.CallbackQuery, state: FSMContext):
         day_1 = data["day_1"]
         day_2 = data["day_2"]
         sabab = data["sabab"]
+
     user = await AbstractClass.get_chat_id("workers", chat_id=str(call.from_user.id))
     user_id1 = user[0][0]
     text = (f"Ishchi {day_1} -- {day_2} kunlari kela olmaslikka ruxsat sorayapdi\n\n"
@@ -70,4 +71,9 @@ async def confirm_order(call: types.CallbackQuery, state: FSMContext):
     await send_message_admin(text=text, chat_id=str(call.from_user.id), user_id=str(user_id1))
     await call.message.answer("<b>Habaringiz adminga yetkazildi✅\n\n"
                               "Iltimos, 👨‍💻admin javobini kuting</b>", parse_mode="HTML")
-    await state.finish()
+    # await state.set_state("admin_ruxsati")
+
+
+# @dp.message_handler(state="admin_ruxsati")
+# async def admin_answer_handler(msg: types.Message, state: FSMContext):
+#     print(msg.text)
