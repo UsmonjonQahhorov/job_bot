@@ -6,14 +6,10 @@ from bot.dispatcher import dp
 from geopy import Nominatim
 from db.utils import AbstractClass
 from test import post_to_api
+from aiogram.dispatcher.filters import Text
+from bot.buttons.text import keldim, ketdim
 
 geolocator = Nominatim(user_agent="my_geocoding_app")
-
-
-@dp.callback_query_handler(lambda call: call.data.startswith("✅Keldim"))
-async def confirm_order(call: types.CallbackQuery, state: FSMContext):
-    await call.message.answer("Unday bolsa iltimos locationni jonating🗺", reply_markup=await location())
-    await state.set_state("location")
 
 
 @dp.message_handler(state='location', content_types=ContentType.LOCATION)
@@ -54,13 +50,13 @@ async def location_handler(msg: types.Message, state: FSMContext):
 
 @dp.callback_query_handler(lambda call: call.data.startswith("yoqKelmadim"))
 async def late_handler(call: types.CallbackQuery, state: FSMContext):
-    await call.message.answer("Unday bolsa menulardan birini tanlang", reply_markup=await main_menu())
+    await call.message.answer("Menulardan birini tanlang", reply_markup=await main_menu())
     await state.set_state("menu2")
 
 
-@dp.callback_query_handler(lambda call: call.data.startswith("uchibkettim"))
-async def ketdim_handler(call: types.CallbackQuery, state: FSMContext):
-    await call.message.answer("Unday bolsa iltimos locationni jonating🗺", reply_markup=await location())
+@dp.message_handler(Text(ketdim), state="*")
+async def ketdim_handler(msg: types.Message, state: FSMContext):
+    await msg.answer("Iltimos joylashuvni yuboring🗺", reply_markup=await location())
     await state.set_state("leave_location")
 
 
@@ -89,6 +85,6 @@ async def location_handler(msg: types.Message, state: FSMContext):
 
 @dp.callback_query_handler(lambda call: call.data.startswith("yoqvalbat"))
 async def ketdim_handler(call: types.CallbackQuery, state: FSMContext):
-    await call.message.answer("Unday bo'lsa ishdan ketkaningizda <strong>Ketdim🚶</strong> tugmasini bosishni unutmang!",
+    await call.message.answer("Iltimos, ishdan ketkaningizda <strong>Ketdim🚶</strong> tugmasini bosishni unutmang!",
                               parse_mode="HTML",
                               reply_markup=ReplyKeyboardRemove())

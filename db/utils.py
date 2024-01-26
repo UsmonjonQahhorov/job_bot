@@ -145,10 +145,6 @@ Base = declarative_base()
 Base.query = db_session.query_property()
 
 
-class Foo(Base):
-    __tablename__ = "foo"
-    id = Column(String, primary_key=True)
-    name = Column(String)
 
 
 class Store:

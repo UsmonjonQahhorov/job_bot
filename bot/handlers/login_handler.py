@@ -10,8 +10,8 @@ from db.utils import AbstractClass, format_phone_number
 
 @dp.message_handler(Text([login]), state="menu")
 async def login_handler(msg: types.Message, state: FSMContext):
-    await msg.answer("<b>Telefon nomeringizni kiriting👇\n"
-                     "Misol: +998998765432</b>", parse_mode="HTML")
+    await msg.answer("<b>Telefon raqamingizni kiriting👇\n</b>"
+                     "<strong>Misol: +998(71) 200-03-21 </strong>", parse_mode="HTML")
     await state.set_state("phone_number")
 
 
@@ -21,15 +21,16 @@ async def number_handler(msg: types.Message, state: FSMContext):
     number = await format_phone_number(phone_number)
     async with state.proxy() as data:
         data["phone_number"] = number
+        print(number)
         db_data = await AbstractClass.get_phone("workers", number)
         for user in db_data:
             if user[11] == None:
                 if number == user[6]:
-                    await msg.answer("<i>Raxmat! Endi sizga berilgan codeni kiriting👇</i>", parse_mode="HTML")
+                    await msg.answer("<i>Raxmat! Endi sizga berilgan <strong>ID</strong> kiriting👇</i>", parse_mode="HTML")
                     await state.set_state("token")
                 else:
-                    await msg.answer("<b>Nomerni notogri kiritdingiz yoki fomat notogri!\nMisol uchun: +998991234567\n"
-                                     "Qayta urinib koring👇</b>", parse_mode="HTML")
+                    await msg.answer("<b>Raqam notog'ri kiritdingiz yoki fomat notog'ri!\nMisol uchun: +998991234567\n"
+                                     "Qayta urinib ko'ring👇</b>", parse_mode="HTML")
             else:
                 await msg.answer("Siz tizimda mavjud emassiz!")
 
@@ -43,6 +44,7 @@ async def token_handler(msg: types.Message, state: FSMContext):
             info = await AbstractClass.get_phone("workers", number)
         except:
             pass
+        print(info[0][12])
         if token == info[0][12]:
             await msg.answer("<i>Siz tizimdasiz!\nMenulardan birini tanlang👇</i>", parse_mode="HTML",
                              reply_markup=await main_menu())
@@ -54,4 +56,4 @@ async def token_handler(msg: types.Message, state: FSMContext):
 
             await state.set_state("menu2")
         else:
-            await msg.answer("<i>Ushbu code aniqlanmadi!</i>", parse_mode="HTML")
+            await msg.answer("<i>Ushbu <strong>ID</strong> aniqlanmadi!</i>", parse_mode="HTML")

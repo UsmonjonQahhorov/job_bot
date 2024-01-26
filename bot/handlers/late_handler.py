@@ -21,7 +21,7 @@ from test import send_message_admin
 @dp.message_handler(Text(late), state="*")
 async def case_handler(msg: types.Message, state: FSMContext):
     await msg.answer(
-        "<i>Iltimos, ishchi nima uchun ishga kech qolasiz sababini ko'rsating👇.</i>",
+        "<i>Iltimos, Nima uchun ishga kech qolasiz sababini ko'rsating👇.</i>",
         reply_markup=types.ReplyKeyboardRemove(), parse_mode="HTML")
     await state.set_state("case")
 
@@ -67,7 +67,7 @@ async def send_handler(call: CallbackQuery, state: FSMContext):
         user = await AbstractClass.get_chat_id("workers", chat_id=str(call.from_user.id))
         async with state.proxy() as data:
             text = (f"Ishchi {data['vaqt']} kech qolishini bildiryapdi\n"
-                    f"Sabab: {data['late_hours']}")
+                    f" Sabab: {data['late_hours']}")
         await send_message_admin(text=text, chat_id=str(call.from_user.id), user_id=str(user[0][0]))
         await call.message.answer("Xabaringiz adminga yetkazildi✅\n\n Iltimos, 👨‍💻admin javobini kuting")
         await state.finish()

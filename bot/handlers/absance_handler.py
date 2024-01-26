@@ -14,7 +14,7 @@ from test import send_message_admin
 @dp.message_handler(Text(absence), state="*")
 async def absence_handler(msg: types.Message, state: FSMContext):
     await msg.answer(
-        "<b>Iltimos, ishchi nima uchun ishka kelmaysiz sababini ko'rsating👇. U kasalik yoki boshqa harakatlar bilan bog'liq bo'lishi mumkin.</b>",
+        "<b>Iltimos, nima uchun ishga kelmaysiz sababini ko'rsating👇. U kasalik yoki boshqa harakatlar bilan bog'liq bo'lishi mumkin.</b>",
         reply_markup=ReplyKeyboardRemove(), parse_mode="HTML")
     await state.set_state("sabab_kiritish")
 
@@ -67,12 +67,11 @@ async def confirm_order(call: types.CallbackQuery, state: FSMContext):
     user = await AbstractClass.get_chat_id("workers", chat_id=str(call.from_user.id))
     user_id1 = user[0][0]
     text = (f"Ishchi {day_1} -- {day_2} kunlari kela olmaslikka ruxsat sorayapdi\n\n"
-            f"Sabab:{sabab}")
+            f" Sabab:{sabab}")
     await send_message_admin(text=text, chat_id=str(call.from_user.id), user_id=str(user_id1))
     await call.message.answer("<b>Habaringiz adminga yetkazildi✅\n\n"
                               "Iltimos, 👨‍💻admin javobini kuting</b>", parse_mode="HTML")
     # await state.set_state("admin_ruxsati")
-
 
 # @dp.message_handler(state="admin_ruxsati")
 # async def admin_answer_handler(msg: types.Message, state: FSMContext):

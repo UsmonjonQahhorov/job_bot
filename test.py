@@ -1,12 +1,17 @@
 import json
 import asyncio
+
+from aiogram.contrib.fsm_storage.memory import MemoryStorage
+from aiogram.contrib.middlewares import fsm
 from aiogram.types import ParseMode
 from datetime import datetime
 from firebase_admin import credentials, firestore, initialize_app
 from bot.buttons.inline_buttons import come_go, leave
+from bot.buttons.reply_buttons import main_menu, ketdim_button
 from bot.dispatcher import bot
 from db.utils import AbstractClass
 import requests
+from aiogram.dispatcher import FSMContext
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 cred = credentials.Certificate("bot/sdkkey2.json")
@@ -94,7 +99,6 @@ async def send_message_everyday():
         user = await AbstractClass.get_all_users("workers")
         for i in user:
             query = await post_to_api_today(user_id=i[0], today_date=today_date)
-            print(query)
             if query == None:
                 if i[14]:
                     a = str(i[8])
@@ -102,7 +106,6 @@ async def send_message_everyday():
                         chat_id = i[14]
                         await send_message_9_am(chat_id)
                         print(f"Send message at 9:00 {chat_id}")
-        # await asyncio.sleep(50)
     except Exception as e:
         print(f"Error sending message to user: {e}")
 
@@ -111,13 +114,16 @@ async def send_message_everyday():
 
 
 async def send_message_after():
+    today_date = datetime.now().strftime("20%y-%m-%d")
     try:
         user = await AbstractClass.get_all_users("workers")
         for i in user:
-            if i[14]:
-                chat_id = i[14]
-                await send_message_9_am(chat_id)
-                print(chat_id)
+            query = await post_to_api_today(user_id=i[0], today_date=today_date)
+            if query:
+                if i[14]:
+                    chat_id = i[14]
+                    await send_message_9_am(chat_id)
+                    print(chat_id)
     except Exception as e:
         print(f"Error sending message to user: {e}")
 
@@ -161,19 +167,19 @@ async def post_to_api_today(user_id, today_date):
 
 async def send_message_9_am(chat_id):
     now = datetime.now()
+    soat = "08"
     if now.weekday() != 6:
-        if now.hour == 9:
+        if now.hour == int(soat) or now.hour == int("09"):
             print(f"sending message to {chat_id}")
             message_text = (
-                f"<i>Assalomu Alaykum, Xayirli Tong!😊\nSoat {now.hour}:{now.minute} bo'ldi, ishga kelganingizda"
-                " bizga xabar berishni unutmang. Sizning punktualligingiz juda qadirlanadi. Kuningiz samarali o'tsin!🚀</i>")
-            await bot.send_message(chat_id, message_text, parse_mode="HTML", reply_markup=await come_go(chat_id))
-
-        elif now.hour == 18:
+                f"<i>Assalomu Aleykum, Xayrli tong!😊\nSoat {now.strftime('%H:%M')} bo'ldi, ishga kelganingizda"
+                " bizga xabar berishni unutmang. Sizning punktualligingiz juda qadrlanadi. Kuningiz samarali o'tsin!🚀</i>")
+            await bot.send_message(chat_id, message_text, parse_mode="HTML", reply_markup=await main_menu())
+        elif now.hour == 18 or now.hour == 19:
             message_text = (
-                f"<i>Assalomu Alaykum, Xayirli kech!😊\nSoat {now.hour}:{now.minute} bo'ldi, ishdan ketganingizda"
+                f"<i>Assalomu Alaykum, Xayrli kech!😊\nSoat {now.strftime('%H:%M')} bo'ldi, ishdan ketganingizda"
                 " bizga xabar berishni unutmang. Sizning punktualligingiz juda qadirlanadi. Yaxshi dam oling.😊</i>")
-            await bot.send_message(chat_id, message_text, parse_mode="HTML", reply_markup=await leave(chat_id))
+            await bot.send_message(chat_id, message_text, parse_mode="HTML", reply_markup=await ketdim_button())
 
 
 async def exit_all_workers():
@@ -182,17 +188,25 @@ async def exit_all_workers():
         today_date = datetime.now().strftime("20%y-%m-%d")
         data = await post_exit_api(today_date)
         for user in data["came"]:
-            data_to_send = {
-                "id": str(user["id"])
-            }
-            await post_to_api(api_url, data_to_send)
+            print(user["leave_time"])
+            if user["leave_time"] == "":
+                data_to_send = {
+                    "id": str(user["id"])
+                }
+                await post_to_api(api_url, data_to_send)
     except Exception as e:
         print(e)
 
 
-scheduler.add_job(send_message_everyday, 'cron', hour="9", minute='0')  # Once a day
 scheduler.add_job(send_message_after, 'cron', hour='18', minute='00')  # Everyday at 15:00
+scheduler.add_job(send_message_after, 'cron', hour='18', minute='30')  # Everyday at 15:00
+scheduler.add_job(send_message_after, 'cron', hour='19', minute='00')  # Everyday at 15:00
+
 scheduler.add_job(exit_all_workers, 'cron', hour='20', minute='00')  # Everyday at 15:00
+
+scheduler.add_job(send_message_everyday, 'cron', hour="08", minute='50')  # Once a day
+scheduler.add_job(send_message_everyday, 'cron', hour="09", minute='00')  # Once a day
+scheduler.add_job(send_message_everyday, 'cron', hour="09", minute='30')  # Once a day
 
 
 async def on_startup(dp):

@@ -2,7 +2,7 @@ import datetime
 from aiogram import types
 import re
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
-from bot.buttons.text import login, register, late, absence, early
+from bot.buttons.text import login, register, late, absence, early, ketdim
 from bot.buttons.text import on, yigirma, ottiz, qirq, ellik, bir_soat, keldim
 
 
@@ -106,3 +106,9 @@ async def location():
 async def early_leave():
     design = [[early]]
     return ReplyKeyboardMarkup(keyboard=design, resize_keyboard=True)
+
+
+async def ketdim_button():
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    button = [ketdim]
+    return keyboard.add(*button)

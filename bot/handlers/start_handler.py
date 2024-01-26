@@ -17,7 +17,6 @@ from test import post_to_api_today
 async def start_handler(msg: types.Message, state: FSMContext):
     user = await AbstractClass.get_chat_id("workers", chat_id=str(msg.from_user.id))
     today_date = datetime.now().strftime("20%y-%m-%d")
-
     try:
         if user and user[0]:
             result = await post_to_api_today(user_id=user[0][0], today_date=today_date)
@@ -47,19 +46,19 @@ async def start_handler(msg: types.Message, state: FSMContext):
         user_id = msg.from_user.id
         await bot.send_photo(chat_id=user_id,
                              photo=open("images/img.png", "rb"),
-                             caption=f"Assalomu alaykum {msg.from_user.full_name} botimizga Xush kelibsiz",
+                             caption=f"Assalomu aleykum {msg.from_user.full_name} botimizga Xush kelibsiz!",
                              reply_markup=await main_menu_buttons())
         await state.set_state("menu")
 
 
-@dp.message_handler(Text(keldim), state="menu2")
+@dp.message_handler(Text(keldim), state="*")
 async def keldim_handler(msg: types.Message, state: FSMContext):
     print("Handler triggered!")
     print(f"Text: {msg.text}")
     try:
         markup = await location()
         print("Location markup:", markup)
-        await msg.answer("Unday bolsa iltimos locationni jonating🗺", reply_markup=markup)
+        await msg.answer("Iltimos joylashuvni yuboring🗺", reply_markup=markup)
         await state.set_state("location")
     except Exception as e:
         print("Exception in keldim_handler:", e)

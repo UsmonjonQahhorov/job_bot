@@ -17,12 +17,12 @@ async def early_leave_handler(msg: types.Message, state: FSMContext):
 
 @dp.message_handler(state="sabab_early")
 async def early_sabab_handler(msg: types.Message, state: FSMContext):
-    await msg.answer("<b>Habaringiz adminga yetkazildi✅</b>", parse_mode="HTML")
+    await msg.answer("<b>Xabaringiz adminga yetkazildi✅</b>", parse_mode="HTML")
     await msg.answer("Raxmat! Yaxshi yetib oling😊\nYaxshi dam oling!")
     user = await AbstractClass.get_chat_id("workers", chat_id=str(msg.from_user.id))
     user_id1 = user[0][0]
     text = (f"Ishchi vaqtidan oldin ishdan ketmoqchi"
-            f"Sabab:{msg.text}")
+            f" Sabab:{msg.text}")
     api_url = "https://tizimswag.astrolab.uz/v1/daily"
     data_to_send = {
         "id": str(user[0][0])

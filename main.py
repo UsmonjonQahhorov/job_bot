@@ -4,7 +4,6 @@ from aiogram import executor
 from bot.dispatcher import dp
 import bot.handlers
 from db import db
-from db.model import User
 from test import send_message_everyday
 from bot.middlewares.discrimin_filter import DiscriminationMiddleware
 from test import on_startup, on_shutdown
