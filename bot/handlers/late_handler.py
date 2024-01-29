@@ -69,8 +69,8 @@ async def send_handler(call: CallbackQuery, state: FSMContext):
             text = (f"Ishchi {data['vaqt']} kech qolishini bildiryapdi\n"
                     f" Sabab: {data['late_hours']}")
         await send_message_admin(text=text, chat_id=str(call.from_user.id), user_id=str(user[0][0]))
-        await call.message.answer("Xabaringiz adminga yetkazildi✅\n\n Iltimos, 👨‍💻admin javobini kuting")
-        await state.finish()
+        await call.message.answer("Xabaringiz adminga yetkazildi✅\n\n Iltimos, 👨‍💻admin javobini kuting", reply_markup = await main_menu())
+        await state.set_data("menu2")
     except:
         pass
 

@@ -66,7 +66,7 @@ async def get_all_messages():
         print(f"Error querying Firestore: {e}")
 
 
-# Bu function fb dagi messageni statusini update qiladi
+# Bu function fb dagi messageni statusini updaate qiladi
 async def update_message_status_by_chat_id(chat_id, new_status):
     messages_ref = db.collection("messages")
     try:
@@ -110,20 +110,17 @@ async def send_message_everyday():
         print(f"Error sending message to user: {e}")
 
 
+
 """Send message everyday at 18:00 to workers"""
-
-
 async def send_message_after():
     today_date = datetime.now().strftime("20%y-%m-%d")
     try:
-        user = await AbstractClass.get_all_users("workers")
-        for i in user:
-            query = await post_to_api_today(user_id=i[0], today_date=today_date)
-            if query:
-                if i[14]:
-                    chat_id = i[14]
-                    await send_message_9_am(chat_id)
-                    print(chat_id)
+        api_url = "https://tizimswag.astrolab.uz/v1/daily"
+        today_date = datetime.now().strftime("20%y-%m-%d")
+        data = await post_exit_api(today_date)
+        for user in data["came"]:
+            if user["leave_time"] == "":
+                await send_message_9_am(user["id"])
     except Exception as e:
         print(f"Error sending message to user: {e}")
 
@@ -206,7 +203,7 @@ scheduler.add_job(exit_all_workers, 'cron', hour='20', minute='00')  # Everyday 
 
 scheduler.add_job(send_message_everyday, 'cron', hour="08", minute='50')  # Once a day
 scheduler.add_job(send_message_everyday, 'cron', hour="09", minute='00')  # Once a day
-scheduler.add_job(send_message_everyday, 'cron', hour="09", minute='30')  # Once a day
+scheduler.add_job(send_message_everyday, 'cron', hour="10", minute='00')  # Once a day
 
 
 async def on_startup(dp):
