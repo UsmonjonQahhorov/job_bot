@@ -18,7 +18,7 @@ from db.utils import AbstractClass
 from test import send_message_admin
 
 
-@dp.message_handler(Text(late), state="*")
+@dp.message_handler(Text(late), state="menu2")
 async def case_handler(msg: types.Message, state: FSMContext):
     await msg.answer(
         "<i>Iltimos, Nima uchun ishga kech qolasiz sababini ko'rsating👇.</i>",
@@ -28,13 +28,10 @@ async def case_handler(msg: types.Message, state: FSMContext):
 
 @dp.message_handler(state="case")
 async def get_case_handler(msg: types.Message, state: FSMContext):
-    try:
-        await bot.delete_message(msg.from_user.id, msg.message_id - 1)
-    except:
-        pass
     async with state.proxy() as data:
-        data["late_hours"] = msg.text
-    await msg.answer("Yaxshi👌. Qanchaga kechikishingizni kiriting🤔, Biror vaqtni tanlang🕐", reply_markup=await late_hours())
+        data["late_case"] = msg.text
+    await msg.answer("Yaxshi👌. Qanchaga kechikishingizni kiriting🤔, Biror vaqtni tanlang🕐",
+                     reply_markup=await late_hours())
     await state.set_state("time")
 
 
@@ -46,16 +43,14 @@ async def time_handler(msg: types.Message, state: FSMContext):
     except:
         pass
     async with state.proxy() as data:
-        data["vaqt"] = msg.text
-        hour = data["late_hours"]
-        print(hour)
-    a = await msg.answer(".", reply_markup=types.ReplyKeyboardRemove())
-    await bot.delete_message(msg.from_user.id, a.message_id)
-    reply_markup = await send_button()
-    await msg.answer(f"Vaqt⏱:{msg.text}\n"
-                     f"Sabab: {data['late_hours']}\n\n"
-                     f"Ushbu ma'lumot adminga jonatilsinmi?",
-                     reply_markup=reply_markup)
+        data['vaqt'] = msg.text
+        a = await msg.answer(".", reply_markup=types.ReplyKeyboardRemove())
+        await bot.delete_message(msg.from_user.id, a.message_id)
+        reply_markup = await send_button()
+        await msg.answer(f"Vaqt⏱:{msg.text}\n"
+                         f"Sabab: {data['late_case']}\n\n"
+                         f"Ushbu ma'lumot adminga jonatilsinmi?",
+                         reply_markup=reply_markup)
     await state.set_state("send_admin")
 
 
@@ -67,10 +62,11 @@ async def send_handler(call: CallbackQuery, state: FSMContext):
         user = await AbstractClass.get_chat_id("workers", chat_id=str(call.from_user.id))
         async with state.proxy() as data:
             text = (f"Ishchi {data['vaqt']} kech qolishini bildiryapdi\n"
-                    f" Sabab: {data['late_hours']}")
+                    f" Sabab: {data['late_case']}")
         await send_message_admin(text=text, chat_id=str(call.from_user.id), user_id=str(user[0][0]))
-        await call.message.answer("Xabaringiz adminga yetkazildi✅\n\n Iltimos, 👨‍💻admin javobini kuting", reply_markup = await main_menu())
-        await state.set_data("menu2")
+        await call.message.answer("Xabaringiz adminga yetkazildi✅\n\n Iltimos, 👨‍💻admin javobini kuting",
+                                  reply_markup=await main_menu())
+        await state.set_state("menu2")
     except:
         pass
 

@@ -199,7 +199,7 @@ scheduler.add_job(send_message_after, 'cron', hour='18', minute='00')  # Everyda
 scheduler.add_job(send_message_after, 'cron', hour='18', minute='30')  # Everyday at 15:00
 scheduler.add_job(send_message_after, 'cron', hour='19', minute='00')  # Everyday at 15:00
 
-scheduler.add_job(exit_all_workers, 'cron', hour='20', minute='00')  # Everyday at 15:00
+scheduler.add_job(exit_all_workers, 'cron', hour='11', minute='38')  # Everyday at 15:00
 
 scheduler.add_job(send_message_everyday, 'cron', hour="08", minute='50')  # Once a day
 scheduler.add_job(send_message_everyday, 'cron', hour="09", minute='00')  # Once a day
