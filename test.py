@@ -1,18 +1,15 @@
-import json
 import asyncio
-
-from aiogram.contrib.fsm_storage.memory import MemoryStorage
-from aiogram.contrib.middlewares import fsm
-from aiogram.types import ParseMode
+import json
 from datetime import datetime
+
+import requests
+from aiogram.types import ParseMode
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from firebase_admin import credentials, firestore, initialize_app
-from bot.buttons.inline_buttons import come_go, leave
+
 from bot.buttons.reply_buttons import main_menu, ketdim_button
 from bot.dispatcher import bot
 from db.utils import AbstractClass
-import requests
-from aiogram.dispatcher import FSMContext
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 cred = credentials.Certificate("bot/sdkkey2.json")
 initialize_app(cred)
@@ -110,8 +107,9 @@ async def send_message_everyday():
         print(f"Error sending message to user: {e}")
 
 
-
 """Send message everyday at 18:00 to workers"""
+
+
 async def send_message_after():
     today_date = datetime.now().strftime("20%y-%m-%d")
     try:
@@ -199,7 +197,7 @@ scheduler.add_job(send_message_after, 'cron', hour='18', minute='00')  # Everyda
 scheduler.add_job(send_message_after, 'cron', hour='18', minute='30')  # Everyday at 15:00
 scheduler.add_job(send_message_after, 'cron', hour='19', minute='00')  # Everyday at 15:00
 
-scheduler.add_job(exit_all_workers, 'cron', hour='11', minute='38')  # Everyday at 15:00
+scheduler.add_job(exit_all_workers, 'cron', hour='20', minute='00')  # Everyday at 15:00
 
 scheduler.add_job(send_message_everyday, 'cron', hour="08", minute='50')  # Once a day
 scheduler.add_job(send_message_everyday, 'cron', hour="09", minute='00')  # Once a day

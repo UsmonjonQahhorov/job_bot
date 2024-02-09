@@ -18,7 +18,7 @@ from db.utils import AbstractClass
 from test import send_message_admin
 
 
-@dp.message_handler(Text(late), state="menu2")
+@dp.message_handler(Text(late), state="*")
 async def case_handler(msg: types.Message, state: FSMContext):
     await msg.answer(
         "<i>Iltimos, Nima uchun ishga kech qolasiz sababini ko'rsating👇.</i>",
