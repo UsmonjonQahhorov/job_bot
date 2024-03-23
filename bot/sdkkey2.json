@@ -1,14 +1,14 @@
 {
-  "type": "service_account",
-  "project_id": "astrolab-chat-2c925",
-  "private_key_id": "0a670e5d5929ee0fa5b264358ecd71d8acc2a5ef",
-  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDk0XSG6wnMN0UQ\nofqBq3N6zMG0YGs/heye8XhppS8m7b8YWs500r1NmBal4t2Szonp7CvmypHrMbAw\nn6F4f3vOJyw7OX1SI9CpLkGePm9MQWC2DH6c18cz65WdJWp8rTfe/XGUAUi76A53\nXOPdDLq8kfgJV8mQcht1F/zpS3P19UsTztHitDZfai7igi7y3KsbDwhDps0KDPM7\n6Hlxh3qg8l5ZwJrXGmun+431s2AvI5Fd5sxzmpd0w86XlW48S+FHsjjFYYAp9oFU\n7/9Z3UwH/A2XXqdWCzucy2NW5lLcqI2N+4/M/WwXCh6Ljm2EWgHWHu/57l+YqgRE\n8PZCttBtAgMBAAECggEAEBP7qSNIy/WyP6nyDTx738wVbFQ+FPeXGdAD0wCNYKHi\nBJcU3LaWIKaoKL3ZLeCfZjV3HD9to2YZaEE/OlVS4Lh17i9q8+OaXNjoOXNPpL8P\nSZt1JhYvZCGQoLspUVtmip+qZGj2sGVs5sw7IqQrVua21Ak8G485CLBH0CjCHC0f\nNoQxWYdjli29ydKa94lu+Y4DVtslp/DKOgYAg7N8PmpiddYUYRj+j34+C2Wm+x3Q\nP/ZOA37scAUAKLcQBgt17LECMfolBzHxtsYTs0ZANxUcVRb3DhwnUXgXVP/d4oZb\nGgxtYxYhea46YKT1bAe6cndHh0jFDDOFM6cCktvkQQKBgQD0wSPVefNZUQ8f+PiL\nhcAL4xiFFDvQIfYd84O0hehsEqNaVMbDG+ZgWgXzuSc3UetiGptFAq9SvR0BN5Gp\nbw/s+aQqVNQ7PfsL0UYeYGNivYF3qBaHNEaKW8JdcP3tcPXcmXbq4iWuEzftLVaM\nENAeDH2LuL32WUIDanEGoQNnsQKBgQDvVN54rBbpwUmMdnDbLUUs7DEq6a3H3gCW\nTsYi1NQmaQb5xz01Ogr7GaiT+YVNAvpKZ3RVspOMYNk2yvX/HIllNAqr7o828wtA\njRH5zfNaH6ez/6ouajFZt8/iwlFqWLpT+7c1XyrgU1VxFVGdr4OGmuSaM/ES3BZ7\nwdxfYNrffQKBgQDU2JWyE1CmLtDpbBmxNAp0C/UJ3jO5557iIyA5QG6EdZzrdGg5\nyqyIxCEC99R7zljVwu+ejxwq5t0vbsTUxQnjeqHiUk0Si+8jMsY4qngjqUvK5Dlb\nMQHbVrrridS5xY96XVdGIo7EGGB9eP0X55MlXpVbibhhYPQAhnNuYV3VsQKBgCBa\n/Oibe02G0AapTICVEjEMjWkbxl6q6LFpXOgAld3LfSHviZrUif+AbIX0ycyrhmLg\nsZ2UUtY7kaIStkcS+JAyBO9RhRMMsIy9hZyb9zZL6UQwYDV+LcXPT898Lb2O2UHZ\nWd9hSk6hdX+gPjRvMfzUm+ss8n52OqPohX5vfaeRAoGAS7FSTBczvPKjr/SU00nL\ncv4z80eLYwYnfAXI8sCS0u+VEewnpE2vQK9X21NXmYljENhrCU6FsvuQTE+f6E/N\ne6G7VtqA3e9X7mTLvaDggf2DjePbsuIWtvR+3bxXhGiTkgFouPA5aJucQ92P+P6R\nnbk34QMJo6vvzl7fKEQ8Tv8=\n-----END PRIVATE KEY-----\n",
-  "client_email": "firebase-adminsdk-irwwq@astrolab-chat-2c925.iam.gserviceaccount.com",
-  "client_id": "112096936125166038523",
-  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-  "token_uri": "https://oauth2.googleapis.com/token",
-  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-irwwq%40astrolab-chat-2c925.iam.gserviceaccount.com",
-  "universe_domain": "googleapis.com"
+  "type": "",
+  "project_id": "",
+  "private_key_id": "",
+  "private_key": "",
+  "client_email": "",
+  "client_id": "",
+  "auth_uri": "",
+  "token_uri": "",
+  "auth_provider_x509_cert_url": "",
+  "client_x509_cert_url": "",
+  "universe_domain": ""
 }
 
