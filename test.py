@@ -118,6 +118,7 @@ async def send_message_after():
         data = await post_exit_api(today_date)
         for user in data["came"]:
             if user["leave_time"] == "":
+                print("start")
                 await send_message_9_am(user["id"])
     except Exception as e:
         print(f"Error sending message to user: {e}")
@@ -193,7 +194,7 @@ async def exit_all_workers():
         print(e)
 
 
-scheduler.add_job(send_message_after, 'cron', hour='18', minute='00')  # Everyday at 15:00
+scheduler.add_job(send_message_after, 'cron', hour='18', minute='11')  # Everyday at 15:00
 scheduler.add_job(send_message_after, 'cron', hour='18', minute='30')  # Everyday at 15:00
 scheduler.add_job(send_message_after, 'cron', hour='19', minute='00')  # Everyday at 15:00
 

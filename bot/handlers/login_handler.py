@@ -21,18 +21,21 @@ async def number_handler(msg: types.Message, state: FSMContext):
     number = await format_phone_number(phone_number)
     async with state.proxy() as data:
         data["phone_number"] = number
-        print(number)
         db_data = await AbstractClass.get_phone("workers", number)
-        for user in db_data:
-            if user[11] == None:
-                if number == user[6]:
-                    await msg.answer("<i>Raxmat! Endi sizga berilgan <strong>ID</strong> kiriting👇</i>", parse_mode="HTML")
-                    await state.set_state("token")
-                else:
-                    await msg.answer("<b>Raqam notog'ri kiritdingiz yoki fomat notog'ri!\nMisol uchun: +998991234567\n"
-                                     "Qayta urinib ko'ring👇</b>", parse_mode="HTML")
-            else:
-                await msg.answer("Siz tizimda mavjud emassiz!")
+        if db_data:
+            for user in db_data:
+                if user[11] == None:
+                    if number == user[6]:
+                        await msg.answer("<i>Raxmat! Endi sizga berilgan <strong>ID</strong> kiriting👇</i>",
+                                         parse_mode="HTML")
+                        await state.set_state("token")
+                    else:
+                        await msg.answer(
+                            "<b>Raqam notog'ri kiritdingiz yoki fomat notog'ri!\nMisol uchun: +998991234567\n"
+                            "Qayta urinib ko'ring👇</b>", parse_mode="HTML")
+        else:
+            await msg.answer("Siz tizimda mavjud emassiz!")
+
 
 @dp.message_handler(state="token")
 async def token_handler(msg: types.Message, state: FSMContext):
